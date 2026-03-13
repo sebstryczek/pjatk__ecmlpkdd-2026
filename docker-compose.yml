@@ -1,0 +1,19 @@
+services:
+  ptv3:
+    build: 
+      context: .
+      network: host
+    shm_size: "64g"  # Increase /dev/shm size for PyTorch DataLoader workers.
+    mem_limit: "64g"  # dostosuj do ilości RAM w systemie
+    volumes:
+      - ./app:/app
+      - ./data:/data
+      - ./train:/train
+      - ./exp:/Pointcept/exp
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]

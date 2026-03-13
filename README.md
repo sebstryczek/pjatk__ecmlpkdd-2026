@@ -1,1 +1,4 @@
-# pjatk__ecmlpkdd-2026
+Run pipeline (preprocessing + training):
+```
+docker compose up --build
+```
