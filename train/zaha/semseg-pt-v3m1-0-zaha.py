@@ -1,4 +1,5 @@
 _base_ = ["../_base_/default_runtime.py"]
+
 seed = 42
 hooks = [
     dict(type="CheckpointLoader"),
@@ -9,8 +10,7 @@ hooks = [
     dict(type="CheckpointSaver", save_freq=None),
 ]
 
-resume = True
-weight = "exp/zaha/semseg-pt-v3m1-0-zaha-exp/model/model_last.pth"
+resume = False
 
 batch_size = 4
 batch_size_test = 1
@@ -153,7 +153,6 @@ data = dict(
         data_root=DATA_ROOT,
         ignore_index=IGNORE_INDEX,
         test_mode=False,
-        loop=4,
         transform=[
             dict(type="CenterShift", apply_z=True),
             dict(
@@ -174,21 +173,14 @@ data = dict(
                 return_grid_coord=True,
                 return_displacement=True,
             ),
-            # dict(
-            #     type="GridCrop",
-            #     cell_size=8.0,
-            #     point_max=TRAIN_POINTS_LIMIT,
-            #     min_points_in_cell=64,
-            #     p_edge=0.4, # 40% - agresywniej samplinguj brzegi
-            #     edge_width=1,
-            #     sample_mode="knn",
-            #     shuffle=True,
-            # ),
             dict(
-                type="ClassAwareCropKNN",
+                type="GridCrop",
+                cell_size=8.0,
                 point_max=TRAIN_POINTS_LIMIT,
-                target_classes=(3, 6, 13), # door, deco, blinds
-                p_target=0.7,
+                min_points_in_cell=64,
+                p_edge=0.4,
+                edge_width=1,
+                shuffle=True
             ),
             dict(type="CenterShift", apply_z=False),
             dict(type="ToTensor"),
